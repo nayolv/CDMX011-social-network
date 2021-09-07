@@ -137,6 +137,7 @@ a{
     background-color: #D8BA86;
     outline: none;
     text-align: center;
+    font-size: 20px;
 }
 #postContainer{
     width: 100%;
@@ -166,7 +167,19 @@ a{
     width: 20px;
     height: 20px;
 }
-
+.likes{
+    display: flex;
+    flex-direction: row;
+    margin: 10px;
+}
+#like{
+    width: 20px;
+    height: 20px;
+}
+#counter{
+    margin-top: 5px;
+    font-size: 15px;
+}
 #modalPadre{
     display: none;
     position: fixed;

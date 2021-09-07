@@ -18,12 +18,13 @@ export const Home = () => {
   <h3> Te has logeado con ${user ? user.email : ''} </h3>
   <p id=verificationMessage>${verification ? '' : 'Te enviamos un link a tu correo, verifica tu cuenta'}<p>
   <form id="wallForm">
-  <input type="text" id="post" placeholder="¿Qué quieres publicar hoy?" required>
-  <button type="submit" id="btnPost">Publicar</button>
+  <input type="text" id="post" placeholder="¿Qué quieres publicar hoy?">
+  <button id="btnPost">Publicar</button>
   </form>
   <div id=postContainer></div>
   </divPadre>
   `;
+
   container.innerHTML = html;
 
   if (verification === false) { // MANDAMOS VERIFICACION AL CORREO DEL USUARIO
@@ -49,11 +50,13 @@ export const Home = () => {
   container.querySelector('#btnPost').addEventListener('click', (e) => { // MANDAMOS LOS POST FB
     e.preventDefault();
     const publicaciones = document.querySelector('#post').value;
+    const likes = 0;
     if (publicaciones === '') {
       alert('ingresa una publicación');
     } else {
       docRef.add({
         publicaciones,
+        likes,
       })
         .then(() => {
           console.log('Document successfully written!');
@@ -80,6 +83,10 @@ export const Home = () => {
       <div id="btnsContenedor">
       <a href="" id='linkEdit' class="links" data-id='${dataPost.id}'>Editar</a>      
       <img id='btnDelete' src="./eliminar.png" data-id='${dataPost.id}'>
+      <div class="likes">
+      <img id="like" src="./corazon.png" data-id='${dataPost.id}'>
+      <span id="counter">${dataPost.likes}</span>
+      </div>
       </div>
       </div>
 
@@ -88,11 +95,23 @@ export const Home = () => {
       <div id="closeDiv">
       <span class="close" id="closeX">&times;</span>
       </div>
-      <input type="text" id="editInput" placeholder="Esto es un ejemplo">
-      <button id="editBtnPost" data-id='${dataPost.id}'>Editar</button>
+      <input type="text" id="editInput">
+      <button id="editBtnPost" data-id='${dataPost.id}'>Publicar</button>
       </div>
       </div>
       `;
+
+        document.querySelectorAll('#like').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            console.log('click');
+            const target = e.target;
+            docRef.doc(target.dataset.id)
+              .update({
+                likes: firebase.firestore.FieldValue.increment(1),
+              });
+          });
+        });
+
         // BORRAR POST
         document.querySelectorAll('#btnDelete').forEach((btn) => { // SE RECORREN CON UN FOREACH
           btn.addEventListener('click', (e) => {

@@ -13,11 +13,16 @@ export const Register = () => {
   <h1>Trueque</h1>
   <p id="slogan">La comunidad más grande de intercambio de ropa.</p>
   </section>
+  <div id="errorBackground">
+  <p id= errorMessage></p>
+  </div>
   <main>
   <form class="formulario">
   <section id="sectionInputs">
   <input type="email" id="email" class="inputs" placeholder="example@email.com">
   <input type="password" id="password" class="inputs" placeholder="Contraseña">
+  <button id="eye">mostrar password</button>
+
   </section>
   <button id="btnRegister">Registrate</button>
   <a id="textRegister">¿Ya tienes una cuenta?</a>
@@ -28,6 +33,7 @@ export const Register = () => {
   </main>`;
 
   container.innerHTML = html;
+  const errorMessage = container.querySelector('#errorMessage');
 
   container.querySelector('#loginLink').addEventListener('click', (e) => {
     e.preventDefault();
@@ -38,16 +44,12 @@ export const Register = () => {
     e.preventDefault();
     const email = container.querySelector('input[type=email]').value;
     const password = container.querySelector('input[type=password]').value;
-    const expReg = /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
-    const validar = expReg.test(email);
 
-    if (validar !== true) {
-      alert('Ingresa un correo válido');
-    }
     createUser(email, password)
       .then(() => onNavigate('/wall'))
       .catch((error) => {
-        alert(error.message);
+        errorMessage.innerHTML = error.message;
+        container.querySelector('#errorBackground').style.display = 'block';
       });
   });
   return container;

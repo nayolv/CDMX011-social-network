@@ -13,6 +13,10 @@ export const Login = () => {
   <h1>Trueque</h1>
   <p id="slogan">La comunidad más grande de intercambio de ropa.</p>
   </section>
+  <div id="errorBackground">
+  <p id= errorMessage></p>
+  </div>
+
   <main>
   <form class="formulario">
   <section id="sectionInputs">
@@ -20,7 +24,6 @@ export const Login = () => {
   <input type="password" id="password" class="inputs" placeholder="Contraseña">
   </section>
   <button id="btnLogin">Iniciar sesión</button>
-  <p id="errorMessage"></p>
   <button id="btnGoogle">Continua con Google</button>
   <a id="textRegister">¿No tienes una cuenta?</a>
   <a href="" id="registerLink" class="links">Registrate</a>
@@ -29,6 +32,7 @@ export const Login = () => {
   </div>`;
 
   container.innerHTML = html;
+  const errorMessage = container.querySelector('#errorMessage');
 
   container.querySelector('#registerLink').addEventListener('click', (e) => {
     e.preventDefault();
@@ -39,27 +43,12 @@ export const Login = () => {
     e.preventDefault();
     const email = container.querySelector('input[type=email]').value;
     const password = container.querySelector('input[type=password]').value;
-    const expReg = /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
-    const validar = expReg.test(email);
-
-    if (validar !== true) {
-      alert('Ingresa un correo válido');
-    }
     signIn(email, password)
       .then(() => onNavigate('/wall'))
       .catch((error) => {
-        alert(error.message);
+        errorMessage.innerHTML = error.message;
+        container.querySelector('#errorBackground').style.display = 'block';
       });
-
-    /* const user = getUser;
-    if (user) {
-      console.log('existe');
-      persistencia()
-        .then(() => signIn(email, password))
-        .catch((error) => {
-          console.log(error.message);
-        });
-    } */
   });
 
   container.querySelector('#btnGoogle').addEventListener('click', (e) => {
@@ -67,7 +56,8 @@ export const Login = () => {
     googleRegister()
       .then(() => onNavigate('/wall'))
       .catch((error) => {
-        alert(error.message);
+        errorMessage.innerHTML = error.message;
+        container.querySelector('#errorBackground').style.display = 'block';
       });
   });
 

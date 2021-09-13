@@ -1,3 +1,5 @@
+/* eslint-disable no-shadow */
+/* eslint-disable eqeqeq */
 import {
   db,
   getUser, sendEmail, signOut,
@@ -16,50 +18,61 @@ export const Home = () => {
   </header>
   <divPadre class='divPadre'>
   <h3> Te has logeado con ${user ? user.email : ''} </h3>
-  <p id=verificationMessage>${verification ? '' : 'Te enviamos un link a tu correo, verifica tu cuenta'}<p>
+  <p id=verificationMessage>${verification ? '' : 'Te enviamos un link a tu correo, verifica tu cuenta'}</p>
   <form id="wallForm">
+  <div id="divPost">
   <input type="text" id="post" placeholder="¿Qué quieres publicar hoy?">
-  <button id="btnPost">Publicar</button>
+  <div id="divBtn">
+  <a href="" id="btnPost" class="links">Publicar</a>
+  </div>
+  </div>
   </form>
+  <div id="errorBackground">
+  <p id= errorMessage></p>
+  </div>
   <div id=postContainer></div>
   </divPadre>
   `;
 
   container.innerHTML = html;
 
-  if (verification === false) { // MANDAMOS VERIFICACION AL CORREO DEL USUARIO
+  if (verification === false) {
     sendEmail()
       .then(() => {
-        // Email verification sent!
+        // MANDAMOS VERIFICACION AL CORREO DEL USUARIO
       });
   }
-
-  container.querySelector('#singOut').addEventListener('click', (e) => { // CERRAR SESION
+  // CERRAR SESION
+  container.querySelector('#singOut').addEventListener('click', (e) => {
     e.preventDefault();
     signOut()
       .then(() => {
         onNavigate('/');
       })
       .catch((error) => {
-        alert(error.message);
+        console.log(error.message);
       });
   });
 
-  const docRef = db.collection('wallPost'); // AQUÍ CONECTAMOS A FB
+  const docRef = db.collection('wallPost'); // CREANDO LA COLECCIÓN EN FB
+  const errorMessage = container.querySelector('#errorMessage');
 
-  container.querySelector('#btnPost').addEventListener('click', (e) => { // MANDAMOS LOS POST FB
+  container.querySelector('#btnPost').addEventListener('click', (e) => {
     e.preventDefault();
     const publicaciones = document.querySelector('#post').value;
-    const likes = 0;
+    const alikes = [];
     if (publicaciones === '') {
-      alert('ingresa una publicación');
+      errorMessage.innerHTML = 'Por favor ingresa una publicación';
+      container.querySelector('#errorBackground').style.display = 'block';
     } else {
+      container.querySelector('#errorBackground').style.display = 'none';
+
       docRef.add({
         publicaciones,
-        likes,
+        alikes,
       })
         .then(() => {
-          console.log('Document successfully written!');
+          // console.log('Document successfully written!');
         })
         .catch((error) => {
           console.error('Error writing document: ', error);
@@ -84,12 +97,11 @@ export const Home = () => {
       <a href="" id='linkEdit' class="links" data-id='${dataPost.id}'>Editar</a>      
       <img id='btnDelete' src="./eliminar.png" data-id='${dataPost.id}'>
       <div class="likes">
-      <img id="like" src="./corazon.png" data-id='${dataPost.id}'>
-      <span id="counter">${dataPost.likes}</span>
+      <img id="like" src="./corazon.png" data-id="${dataPost.id}">
+      <span id="counter">${dataPost.alikes.length}</span>
       </div>
       </div>
       </div>
-
       <div id="modalPadre">
       <div id="contenedorModal">
       <div id="closeDiv">
@@ -101,17 +113,6 @@ export const Home = () => {
       </div>
       `;
 
-        document.querySelectorAll('#like').forEach((btn) => {
-          btn.addEventListener('click', (e) => {
-            console.log('click');
-            const target = e.target;
-            docRef.doc(target.dataset.id)
-              .update({
-                likes: firebase.firestore.FieldValue.increment(1),
-              });
-          });
-        });
-
         // BORRAR POST
         document.querySelectorAll('#btnDelete').forEach((btn) => { // SE RECORREN CON UN FOREACH
           btn.addEventListener('click', (e) => {
@@ -120,7 +121,7 @@ export const Home = () => {
             docRef.doc(target.dataset.id)
               .delete()
               .then(() => {
-                console.log('Document successfully deleted!');
+                // console.log('Document successfully deleted!');
               }).catch((error) => {
                 console.error('Error removing document: ', error);
               });
@@ -136,7 +137,6 @@ export const Home = () => {
             const target = e.target;
             docRef.doc(target.dataset.id)
               .get()
-              // eslint-disable-next-line no-shadow
               .then((doc) => {
                 const dataEdit = doc.data();
                 document.getElementById('editInput').value = dataEdit.publicaciones;
@@ -146,7 +146,6 @@ export const Home = () => {
               });
 
             document.getElementById('editBtnPost').addEventListener('click', () => {
-              // eslint-disable-next-line no-shadow
               const target = e.target;
               const publicaciones = document.querySelector('#editInput').value;
 
@@ -164,6 +163,32 @@ export const Home = () => {
             document.getElementById('closeX').addEventListener('click', () => {
               document.getElementById('modalPadre').style.display = 'none';
             });
+          });
+        });
+
+        // DAR LIKE POST
+        document.querySelectorAll('#like').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            console.log('like');
+            const target = e.target;
+            // const alikes = dataPost.alikes;
+            const docLikes = docRef.doc(target.dataset.id);
+            docLikes.get()
+              .then((doc) => {
+                if (!doc.data().alikes.includes(user.email)) {
+                  console.log('alikes');
+                  docLikes
+                    .update({
+                      alikes: firebase.firestore.FieldValue.arrayUnion(user.email),
+                    });
+                  console.log('likes dps');
+                } else {
+                  docLikes
+                    .update({
+                      alikes: firebase.firestore.FieldValue.arrayRemove(user.email),
+                    });
+                }
+              });
           });
         });
       });

@@ -21,8 +21,6 @@ export const Register = () => {
   <section id="sectionInputs">
   <input type="email" id="email" class="inputs" placeholder="example@email.com">
   <input type="password" id="password" class="inputs" placeholder="Contraseña">
-  <button id="eye">mostrar password</button>
-
   </section>
   <button id="btnRegister">Registrate</button>
   <a id="textRegister">¿Ya tienes una cuenta?</a>

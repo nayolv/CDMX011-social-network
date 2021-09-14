@@ -15,10 +15,6 @@ const dispatchRoute = (pathname = '/') => {
   render(root, component());
 };
 
-/* window.addEventListener('load', () => {
-  dispatchRoute(window.location.pathname);
-}); */
-
 export const onNavigate = (pathname) => {
   window.history.pushState(
     {},

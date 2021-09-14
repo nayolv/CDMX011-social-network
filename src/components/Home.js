@@ -17,7 +17,7 @@ export const Home = () => {
   <a href ='' id='singOut' class="links">Cerrar Sesion</a>
   </header>
   <divPadre class='divPadre'>
-  <h3> Te has logeado con ${user ? user.email : ''} </h3>
+  <h3> Te has logeado ${user ? user.displayName : ''} </h3>
   <p id=verificationMessage>${verification ? '' : 'Te enviamos un link a tu correo, verifica tu cuenta'}</p>
   <form id="wallForm">
   <div id="divPost">
@@ -35,6 +35,8 @@ export const Home = () => {
   `;
 
   container.innerHTML = html;
+  const postContainer = container.querySelector('#postContainer');
+  const errorMessage = container.querySelector('#errorMessage');
 
   if (verification === false) {
     sendEmail()
@@ -50,38 +52,37 @@ export const Home = () => {
         onNavigate('/');
       })
       .catch((error) => {
-        console.log(error.message);
+        errorMessage.innerHTML = error.message;
+        container.querySelector('#errorBackground').style.display = 'block';
       });
   });
 
   const docRef = db.collection('wallPost'); // CREANDO LA COLECCIÓN EN FB
-  const errorMessage = container.querySelector('#errorMessage');
 
   container.querySelector('#btnPost').addEventListener('click', (e) => {
     e.preventDefault();
     const publicaciones = document.querySelector('#post').value;
-    const alikes = [];
+    const likes = [];
     if (publicaciones === '') {
       errorMessage.innerHTML = 'Por favor ingresa una publicación';
       container.querySelector('#errorBackground').style.display = 'block';
     } else {
       container.querySelector('#errorBackground').style.display = 'none';
-
+      // AGREGA POST
       docRef.add({
         publicaciones,
-        alikes,
+        likes,
       })
         .then(() => {
-          // console.log('Document successfully written!');
+        // 'Document successfully written!
         })
         .catch((error) => {
-          console.error('Error writing document: ', error);
+          errorMessage.innerHTML = error.message;
+          container.querySelector('#errorBackground').style.display = 'block';
         });
     }
     document.querySelector('#wallForm').reset();
   });
-
-  const postContainer = container.querySelector('#postContainer');
 
   docRef
     .onSnapshot((querySnapshot) => { // TRAEMOS LOS POST Y LOS AGREGAMOS EN TIEMPO REAL
@@ -98,7 +99,7 @@ export const Home = () => {
       <img id='btnDelete' src="./eliminar.png" data-id='${dataPost.id}'>
       <div class="likes">
       <img id="like" src="./corazon.png" data-id="${dataPost.id}">
-      <span id="counter">${dataPost.alikes.length}</span>
+      <span id="counter">${dataPost.likes.length}</span>
       </div>
       </div>
       </div>
@@ -121,9 +122,10 @@ export const Home = () => {
             docRef.doc(target.dataset.id)
               .delete()
               .then(() => {
-                // console.log('Document successfully deleted!');
+                // Document successfully deleted!
               }).catch((error) => {
-                console.error('Error removing document: ', error);
+                errorMessage.innerHTML = error.message;
+                container.querySelector('#errorBackground').style.display = 'block';
               });
           });
         });
@@ -142,7 +144,8 @@ export const Home = () => {
                 document.getElementById('editInput').value = dataEdit.publicaciones;
               })
               .catch((error) => {
-                console.log('Error getting document:', error);
+                errorMessage.innerHTML = error.message;
+                container.querySelector('#errorBackground').style.display = 'block';
               });
 
             document.getElementById('editBtnPost').addEventListener('click', () => {
@@ -154,10 +157,11 @@ export const Home = () => {
                   publicaciones,
                 })
                 .then(() => {
-                  console.log('Document successfully updated!');
+                  // Document successfully updated!
                 })
                 .catch((error) => {
-                  console.error('Error updating document: ', error);
+                  errorMessage.innerHTML = error.message;
+                  container.querySelector('#errorBackground').style.display = 'block';
                 });
             });
             document.getElementById('closeX').addEventListener('click', () => {
@@ -169,23 +173,19 @@ export const Home = () => {
         // DAR LIKE POST
         document.querySelectorAll('#like').forEach((btn) => {
           btn.addEventListener('click', (e) => {
-            console.log('like');
             const target = e.target;
-            // const alikes = dataPost.alikes;
             const docLikes = docRef.doc(target.dataset.id);
             docLikes.get()
               .then((doc) => {
-                if (!doc.data().alikes.includes(user.email)) {
-                  console.log('alikes');
+                if (!doc.data().likes.includes(user.email)) {
                   docLikes
                     .update({
-                      alikes: firebase.firestore.FieldValue.arrayUnion(user.email),
+                      likes: firebase.firestore.FieldValue.arrayUnion(user.email),
                     });
-                  console.log('likes dps');
                 } else {
                   docLikes
                     .update({
-                      alikes: firebase.firestore.FieldValue.arrayRemove(user.email),
+                      likes: firebase.firestore.FieldValue.arrayRemove(user.email),
                     });
                 }
               });

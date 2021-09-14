@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Login } from './components/Login.js';
 import { Home } from './components/Home.js';
 import { Register } from './components/Register.js';
@@ -17,9 +18,9 @@ const dispatchRoute = (pathname = '/') => {
 
 export const onNavigate = (pathname) => {
   window.history.pushState(
-    {},
-    pathname,
-    window.location.origin + pathname,
+    {}, // estado
+    pathname, // title
+    window.location.origin + pathname, // url
   );
   dispatchRoute(pathname);
 };
@@ -36,6 +37,11 @@ firebase.auth().onAuthStateChanged((user) => {
   onNavigate(pathname);
 });
 
+/*
 window.addEventListener('popstate', () => {
+  dispatchRoute(window.location.pathname);
+});
+*/
+window.onpopstate = (() => {
   dispatchRoute(window.location.pathname);
 });

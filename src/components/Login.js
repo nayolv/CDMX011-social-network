@@ -29,7 +29,8 @@ export const Login = () => {
   <a href="" id="registerLink" class="links">Registrate</a>
   </form>
   </main>
-  </div>`;
+  </div>
+  <footer>Trueque 2021</footer>`;
 
   container.innerHTML = html;
   const errorMessage = container.querySelector('#errorMessage');
@@ -60,6 +61,5 @@ export const Login = () => {
         container.querySelector('#errorBackground').style.display = 'block';
       });
   });
-
   return container;
 };

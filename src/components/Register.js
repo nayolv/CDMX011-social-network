@@ -27,8 +27,9 @@ export const Register = () => {
   <a href="" id="loginLink" class="links">Inicia sesión</a>
   <p id="errorMessage"></p>
   </form>
+  </main>
   </div>
-  </main>`;
+  <footer>Trueque 2021</footer>`;
 
   container.innerHTML = html;
   const errorMessage = container.querySelector('#errorMessage');

@@ -1,36 +1,49 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Testeando Login debería renderizar 1`] = `
-"<div><main>
+"<div> 
+  <header>
+  </header>
   <div class=\\"divPadre\\">
   <section id=\\"contenedorLogo\\">
   <img id=\\"logo\\" src=\\"./sweatshirt.png\\">
   <h1>Trueque</h1>
   <p id=\\"slogan\\">La comunidad más grande de intercambio de ropa.</p>
   </section>
+  <div id=\\"errorBackground\\">
+  <p id=\\"errorMessage\\"></p>
+  </div>
+
+  <main>
   <form class=\\"formulario\\">
   <section id=\\"sectionInputs\\">
   <input type=\\"email\\" id=\\"email\\" class=\\"inputs\\" placeholder=\\"example@email.com\\">
   <input type=\\"password\\" id=\\"password\\" class=\\"inputs\\" placeholder=\\"Contraseña\\">
   </section>
   <button id=\\"btnLogin\\">Iniciar sesión</button>
-  <p id=\\"errorMessage\\"></p>
   <button id=\\"btnGoogle\\">Continua con Google</button>
   <a id=\\"textRegister\\">¿No tienes una cuenta?</a>
-  <a href=\\"\\" id=\\"registerLink\\">Registrate</a>
+  <a href=\\"\\" id=\\"registerLink\\" class=\\"links\\">Registrate</a>
   </form>
+  </main>
   </div>
-  </main></div>"
+  <footer>Trueque 2021</footer></div>"
 `;
 
 exports[`Testeando Register debería renderizar 1`] = `
-"<div><main>
+"<div>
+  <header>
+  </header>
   <div class=\\"divPadre\\">
   <section id=\\"contenedorLogo\\">
   <img id=\\"logo\\" src=\\"./sweatshirt.png\\">
   <h1>Trueque</h1>
   <p id=\\"slogan\\">La comunidad más grande de intercambio de ropa.</p>
   </section>
+  <div id=\\"errorBackground\\">
+  <p id=\\"errorMessage\\"></p>
+  </div>
+  <main>
   <form class=\\"formulario\\">
   <section id=\\"sectionInputs\\">
   <input type=\\"email\\" id=\\"email\\" class=\\"inputs\\" placeholder=\\"example@email.com\\">
@@ -38,9 +51,10 @@ exports[`Testeando Register debería renderizar 1`] = `
   </section>
   <button id=\\"btnRegister\\">Registrate</button>
   <a id=\\"textRegister\\">¿Ya tienes una cuenta?</a>
-  <a href=\\"\\" id=\\"loginLink\\">Inicia sesión</a>
+  <a href=\\"\\" id=\\"loginLink\\" class=\\"links\\">Inicia sesión</a>
   <p id=\\"errorMessage\\"></p>
   </form>
+  </main>
   </div>
-  </main></div>"
+  <footer>Trueque 2021</footer></div>"
 `;

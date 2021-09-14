@@ -5,8 +5,6 @@ import './globals/firebase';
 import { Login } from '../src/components/Login.js';
 import { render } from '../src/utils.js';
 import { Register } from '../src/components/Register';
-import { Home } from '../src/components/Home';
-
 /* eslint-disable no-console */
 
 describe('Testeando Login', () => {
@@ -74,7 +72,8 @@ describe('Testeando Register', () => {
     expect(mockLogin).toHaveBeenCalledWith(email, password);
   });
 });
-describe('Testeando Home', () => {
+
+/* describe('Testeando Home', () => {
   document.body.innerHTML = '<div id="root"></div>';
 
   test('debería renderizar', () => {
@@ -84,4 +83,4 @@ describe('Testeando Home', () => {
 
     expect(rootDiv.innerHTML).toMatchSnapshot();
   });
-});
+}); */

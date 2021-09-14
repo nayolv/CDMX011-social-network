@@ -246,6 +246,15 @@ a{
     border-radius: 10px;
     padding: 5px;
 }
+footer {
+    position: absolute;
+    text-align: right;
+    margin: 5px;
+    right: 0;
+    bottom: 0px;
+    height: 20px;
+    width: 100%;
+ }
 @keyframes modal{
     from {top: 0px;}
     to {top: 250px;}

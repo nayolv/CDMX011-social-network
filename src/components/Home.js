@@ -17,7 +17,7 @@ export const Home = () => {
   <a href ='' id='singOut' class="links">Cerrar Sesion</a>
   </header>
   <divPadre class='divPadre'>
-  <h3> Te has logeado ${user ? user.displayName : ''} </h3>
+  <h3> Te has logeado ${user ? user.email : ''} </h3>
   <p id=verificationMessage>${verification ? '' : 'Te enviamos un link a tu correo, verifica tu cuenta'}</p>
   <form id="wallForm">
   <div id="divPost">
@@ -62,7 +62,7 @@ export const Home = () => {
   container.querySelector('#btnPost').addEventListener('click', (e) => {
     e.preventDefault();
     const publicaciones = document.querySelector('#post').value;
-    const likes = [];
+    const alikes = [];
     if (publicaciones === '') {
       errorMessage.innerHTML = 'Por favor ingresa una publicación';
       container.querySelector('#errorBackground').style.display = 'block';
@@ -71,7 +71,7 @@ export const Home = () => {
       // AGREGA POST
       docRef.add({
         publicaciones,
-        likes,
+        alikes,
       })
         .then(() => {
         // 'Document successfully written!
@@ -99,34 +99,67 @@ export const Home = () => {
       <img id='btnDelete' src="./eliminar.png" data-id='${dataPost.id}'>
       <div class="likes">
       <img id="like" src="./corazon.png" data-id="${dataPost.id}">
-      <span id="counter">${dataPost.likes.length}</span>
+      <span id="counter">${dataPost.alikes.length}</span>
       </div>
       </div>
       </div>
-      <div id="modalPadre">
-      <div id="contenedorModal">
-      <div id="closeDiv">
-      <span class="close" id="closeX">&times;</span>
+
+      <div id="modalEdit" class="modalPadre">
+      <div class="contenedorModal">
+      <div class="closeDiv">
+      <div class="confirmDiv">
+      <p class="confirm">¿Editar esta publicación?</p>
+      </div>
+      <span class="close" id="closeEdit">&times;</span>
       </div>
       <input type="text" id="editInput">
       <button id="editBtnPost" data-id='${dataPost.id}'>Publicar</button>
       </div>
+      </div>
+
+      <div id="modalDelete" class="modalPadre">
+      <div class="contenedorModal">
+      <div class="closeDiv">
+      <div class="confirmDiv">
+      <p class="confirm">¿Borrar esta publicación?</p>
+      </div>
+      <span class="close" id="closeDelete">&times;</span>
+      </div>
+      <div id="deleteDiv"></div>
+      <button id="deleteBtnPost" data-id='${dataPost.id}'>Borrar</button>
       </div>
       `;
 
         // BORRAR POST
         document.querySelectorAll('#btnDelete').forEach((btn) => { // SE RECORREN CON UN FOREACH
           btn.addEventListener('click', (e) => {
+            document.getElementById('modalDelete').style.display = 'block';
             const target = e.target; // DELEGACION DE EVENTOS
-            // SE PASA COMO VALOR LA ID AL DAR CLICK SE ELIMINA
             docRef.doc(target.dataset.id)
-              .delete()
-              .then(() => {
-                // Document successfully deleted!
-              }).catch((error) => {
+              .get()
+              .then((doc) => {
+                const dataDelete = doc.data();
+                document.getElementById('deleteDiv').innerHTML = dataDelete.publicaciones;
+              })
+              .catch((error) => {
                 errorMessage.innerHTML = error.message;
                 container.querySelector('#errorBackground').style.display = 'block';
               });
+            document.getElementById('deleteBtnPost').addEventListener('click', (e) => {
+              const target = e.target;
+              docRef.doc(target.dataset.id)
+                .delete()
+                .then(() => {
+                // Document successfully deleted!
+                }).catch((error) => {
+                  errorMessage.innerHTML = error.message;
+                  container.querySelector('#errorBackground').style.display = 'block';
+                });
+            });
+
+            document.getElementById('closeDelete').addEventListener('click', () => {
+              document.getElementById('modalDelete').style.display = 'none';
+            });
           });
         });
 
@@ -134,7 +167,7 @@ export const Home = () => {
         document.querySelectorAll('#linkEdit').forEach((btnE) => {
           btnE.addEventListener('click', (e) => {
             e.preventDefault();
-            document.getElementById('modalPadre').style.display = 'block';
+            document.getElementById('modalEdit').style.display = 'block';
 
             const target = e.target;
             docRef.doc(target.dataset.id)
@@ -164,8 +197,8 @@ export const Home = () => {
                   container.querySelector('#errorBackground').style.display = 'block';
                 });
             });
-            document.getElementById('closeX').addEventListener('click', () => {
-              document.getElementById('modalPadre').style.display = 'none';
+            document.getElementById('closeEdit').addEventListener('click', () => {
+              document.getElementById('modalEdit').style.display = 'none';
             });
           });
         });
@@ -177,15 +210,15 @@ export const Home = () => {
             const docLikes = docRef.doc(target.dataset.id);
             docLikes.get()
               .then((doc) => {
-                if (!doc.data().likes.includes(user.email)) {
+                if (!doc.data().alikes.includes(user.email)) {
                   docLikes
                     .update({
-                      likes: firebase.firestore.FieldValue.arrayUnion(user.email),
+                      alikes: firebase.firestore.FieldValue.arrayUnion(user.email),
                     });
                 } else {
                   docLikes
                     .update({
-                      likes: firebase.firestore.FieldValue.arrayRemove(user.email),
+                      alikes: firebase.firestore.FieldValue.arrayRemove(user.email),
                     });
                 }
               });

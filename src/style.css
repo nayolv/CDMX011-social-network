@@ -167,6 +167,7 @@ a{
 }
 #btnsContenedor{
     display: flex;
+    width: fit-content;
     flex-direction: column;
     align-items: center;
 }
@@ -192,15 +193,18 @@ a{
     font-size: 15px;
 }
 
-#modalPadre{
+
+.modalPadre{
     display: none;
     position: absolute;
-    margin-top: -200px;
+    margin-top: -220px;
+    left: 0;
+    right: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(65, 105, 225, 0.13);
+    background-color: transparent;
 }
-#contenedorModal{
+.contenedorModal{
     margin: auto;
     position: relative;
     align-items: center;
@@ -214,9 +218,10 @@ a{
     animation-fill-mode: forwards;
 }
 
-#closeDiv{
+.closeDiv{
     display: flex;
-    text-align: right;
+    width: 100%;
+    text-align: right;    
     margin-right: 10px;
 }
 .close{
@@ -231,12 +236,29 @@ a{
     cursor: pointer;
 }
 #editInput{
-    width: 95%;
+    width: 80%;
+    text-overflow: ellipsis;
     font-size: 20px;
     text-align: center;
     background-color: transparent;
     border: none;
     outline: none;
+}
+#deleteDiv{
+    padding: 10px;
+    height: 50px;
+    overflow: hidden;
+    text-align: justify;
+    font-size: 17px;
+}
+.confirmDiv{
+    width: 100%;
+    margin: 10px;
+}
+.confirm{
+   font-weight: bold;
+   text-align: left;
+   
 }
 #errorBackground{
     display: none;
@@ -246,7 +268,7 @@ a{
     border-radius: 10px;
     padding: 5px;
 }
-footer {
+footer{
     position: absolute;
     text-align: right;
     margin: 5px;
@@ -293,7 +315,7 @@ footer {
         overflow: scroll;
 
     }
-    #contenedorModal{
+    .contenedorModal{
         width: 50%;
     }
     #divPost{

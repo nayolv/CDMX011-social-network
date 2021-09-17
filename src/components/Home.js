@@ -62,7 +62,8 @@ export const Home = () => {
   container.querySelector('#btnPost').addEventListener('click', (e) => {
     e.preventDefault();
     const publicaciones = document.querySelector('#post').value;
-    const alikes = [];
+    const likes = [];
+    const nameUser = user.email;
     if (publicaciones === '') {
       errorMessage.innerHTML = 'Por favor ingresa una publicación';
       container.querySelector('#errorBackground').style.display = 'block';
@@ -71,7 +72,8 @@ export const Home = () => {
       // AGREGA POST
       docRef.add({
         publicaciones,
-        alikes,
+        likes,
+        nameUser,
       })
         .then(() => {
         // 'Document successfully written!
@@ -92,6 +94,9 @@ export const Home = () => {
         dataPost.id = doc.id;
 
         postContainer.innerHTML += `
+        <section id="nameUserSection">
+        <p id="nameUser">${dataPost.nameUser} escribió:</p>
+        </section>
       <div id='contenedorPublicacion'>
       ${dataPost.publicaciones}
       <div id="btnsContenedor">
@@ -99,7 +104,7 @@ export const Home = () => {
       <img id='btnDelete' src="./eliminar.png" data-id='${dataPost.id}'>
       <div class="likes">
       <img id="like" src="./corazon.png" data-id="${dataPost.id}">
-      <span id="counter">${dataPost.alikes.length}</span>
+      <span id="counter">${dataPost.likes.length}</span>
       </div>
       </div>
       </div>
@@ -210,15 +215,15 @@ export const Home = () => {
             const docLikes = docRef.doc(target.dataset.id);
             docLikes.get()
               .then((doc) => {
-                if (!doc.data().alikes.includes(user.email)) {
+                if (!doc.data().likes.includes(user.email)) {
                   docLikes
                     .update({
-                      alikes: firebase.firestore.FieldValue.arrayUnion(user.email),
+                      likes: firebase.firestore.FieldValue.arrayUnion(user.email),
                     });
                 } else {
                   docLikes
                     .update({
-                      alikes: firebase.firestore.FieldValue.arrayRemove(user.email),
+                      likes: firebase.firestore.FieldValue.arrayRemove(user.email),
                     });
                 }
               });

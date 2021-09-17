@@ -94,10 +94,11 @@ export const Home = () => {
         dataPost.id = doc.id;
 
         postContainer.innerHTML += `
-        <section id="nameUserSection">
+        <div id='contenedorPadre'>
+      <section id="nameUserSection">
         <p id="nameUser">${dataPost.nameUser} escribió:</p>
         </section>
-      <div id='contenedorPublicacion'>
+        <div id='contenedorPublicacion'>
       ${dataPost.publicaciones}
       <div id="btnsContenedor">
       <a href="" id='linkEdit' class="links" data-id='${dataPost.id}'>Editar</a>      
@@ -105,6 +106,7 @@ export const Home = () => {
       <div class="likes">
       <img id="like" src="./corazon.png" data-id="${dataPost.id}">
       <span id="counter">${dataPost.likes.length}</span>
+      </div>
       </div>
       </div>
       </div>

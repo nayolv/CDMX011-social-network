@@ -137,9 +137,12 @@ a{
     padding: 10px;
     width: fit-content;
 }
+#contenedorPadre{
+    width: 100%;
+}
 #nameUserSection{
     text-align: left;
-    margin-left: 10px;
+    margin-left: 20px;
     padding: 5px;
     width: fit-content;
     border-radius: 10px;
@@ -215,10 +218,8 @@ a{
 .contenedorModal{
     margin: auto;
     position: relative;
-    align-items: center;
-    text-align: center;
     background: #D8BA86;
-    width: 95%;
+    width: 85%;
     border: 1px solid #da67679f;
     border-radius: 15px;
     animation-name: modal;
@@ -247,7 +248,7 @@ a{
     width: 80%;
     text-overflow: ellipsis;
     font-size: 20px;
-    text-align: center;
+    text-align: left;
     background-color: transparent;
     border: none;
     outline: none;
@@ -316,10 +317,14 @@ footer{
     }
     #postContainer{
         flex-direction: row;
+        justify-content: space-between;        
+        width: 100%;
     }
     #contenedorPublicacion{
-        width: 50%;
+        margin-left: 20px;
+        margin-right: 20px;
         max-height: 200px;
+        
         overflow: scroll;
 
     }

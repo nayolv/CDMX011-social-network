@@ -74,6 +74,7 @@ export const Home = () => {
         publicaciones,
         likes,
         nameUser,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       })
         .then(() => {
         // 'Document successfully written!
@@ -87,40 +88,28 @@ export const Home = () => {
   });
 
   docRef
+    .orderBy('timestamp')
     .onSnapshot((querySnapshot) => { // TRAEMOS LOS POST Y LOS AGREGAMOS EN TIEMPO REAL
       postContainer.innerHTML = '';
       querySnapshot.forEach((doc) => {
         const dataPost = doc.data();
-        dataPost.id = doc.id;
+        const id = doc.id;
 
         postContainer.innerHTML += `
         <div id='contenedorPadre'>
       <section id="nameUserSection">
-        <p id="nameUser">${dataPost.nameUser} escribió:</p>
+        <p id="nameUser">${dataPost.nameUser}</p>
         </section>
         <div id='contenedorPublicacion'>
       ${dataPost.publicaciones}
       <div id="btnsContenedor">
-      <a href="" id='linkEdit' class="links" data-id='${dataPost.id}'>Editar</a>      
-      <img id='btnDelete' src="./eliminar.png" data-id='${dataPost.id}'>
+      <a href="" id='linkEdit' class="links" data-id='${id}'>Editar</a>      
+      <img id='btnDelete' src="./eliminar.png" data-id='${id}'>
       <div class="likes">
-      <img id="like" src="./corazon.png" data-id="${dataPost.id}">
+      <img id="like" src="./corazon.png" data-id="${id}">
       <span id="counter">${dataPost.likes.length}</span>
       </div>
       </div>
-      </div>
-      </div>
-
-      <div id="modalEdit" class="modalPadre">
-      <div class="contenedorModal">
-      <div class="closeDiv">
-      <div class="confirmDiv">
-      <p class="confirm">¿Editar esta publicación?</p>
-      </div>
-      <span class="close" id="closeEdit">&times;</span>
-      </div>
-      <input type="text" id="editInput">
-      <button id="editBtnPost" data-id='${dataPost.id}'>Publicar</button>
       </div>
       </div>
 
@@ -133,40 +122,55 @@ export const Home = () => {
       <span class="close" id="closeDelete">&times;</span>
       </div>
       <div id="deleteDiv"></div>
-      <button id="deleteBtnPost" data-id='${dataPost.id}'>Borrar</button>
+      <button id="deleteBtnPost" data-id='${id}'>Borrar</button>
+      </div>
+      </div>
+
+      <div id="modalEdit" class="modalPadre">
+      <div class="contenedorModal">
+      <div class="closeDiv">
+      <div class="confirmDiv">
+      <p class="confirm">¿Editar esta publicación?</p>
+      </div>
+      <span class="close" id="closeEdit">&times;</span>
+      </div>
+      <input type="text" id="editInput">
+      <button id="editBtnPost" data-id='${id}'>Publicar</button>
+      </div>
       </div>
       `;
 
         // BORRAR POST
         document.querySelectorAll('#btnDelete').forEach((btn) => { // SE RECORREN CON UN FOREACH
           btn.addEventListener('click', (e) => {
+            // DELETE MODAL
             document.getElementById('modalDelete').style.display = 'block';
-            const target = e.target; // DELEGACION DE EVENTOS
+            document.getElementById('closeDelete').addEventListener('click', () => {
+              document.getElementById('modalDelete').style.display = 'none';
+            });
+            const target = e.target;
             docRef.doc(target.dataset.id)
               .get()
               .then((doc) => {
-                const dataDelete = doc.data();
-                document.getElementById('deleteDiv').innerHTML = dataDelete.publicaciones;
+                document.querySelector('#deleteDiv').innerHTML = doc.data().publicaciones;
+
+                document.querySelector('#deleteBtnPost').addEventListener('click', (e) => {
+                  const target = e.target;
+
+                  docRef.doc(target.dataset.id)
+                    .delete()
+                    .then(() => {
+                      // Document successfully deleted!
+                    }).catch((error) => {
+                      errorMessage.innerHTML = error.message;
+                      container.querySelector('#errorBackground').style.display = 'block';
+                    });
+                });
               })
               .catch((error) => {
                 errorMessage.innerHTML = error.message;
                 container.querySelector('#errorBackground').style.display = 'block';
               });
-            document.getElementById('deleteBtnPost').addEventListener('click', (e) => {
-              const target = e.target;
-              docRef.doc(target.dataset.id)
-                .delete()
-                .then(() => {
-                // Document successfully deleted!
-                }).catch((error) => {
-                  errorMessage.innerHTML = error.message;
-                  container.querySelector('#errorBackground').style.display = 'block';
-                });
-            });
-
-            document.getElementById('closeDelete').addEventListener('click', () => {
-              document.getElementById('modalDelete').style.display = 'none';
-            });
           });
         });
 
@@ -175,6 +179,9 @@ export const Home = () => {
           btnE.addEventListener('click', (e) => {
             e.preventDefault();
             document.getElementById('modalEdit').style.display = 'block';
+            document.getElementById('closeEdit').addEventListener('click', () => {
+              document.getElementById('modalEdit').style.display = 'none';
+            });
 
             const target = e.target;
             docRef.doc(target.dataset.id)
@@ -182,31 +189,27 @@ export const Home = () => {
               .then((doc) => {
                 const dataEdit = doc.data();
                 document.getElementById('editInput').value = dataEdit.publicaciones;
+                document.getElementById('editBtnPost').addEventListener('click', () => {
+                  const target = e.target;
+                  const publicaciones = document.querySelector('#editInput').value;
+
+                  docRef.doc(target.dataset.id)
+                    .update({
+                      publicaciones,
+                    })
+                    .then(() => {
+                      // Document successfully updated!
+                    })
+                    .catch((error) => {
+                      errorMessage.innerHTML = error.message;
+                      container.querySelector('#errorBackground').style.display = 'block';
+                    });
+                });
               })
               .catch((error) => {
                 errorMessage.innerHTML = error.message;
                 container.querySelector('#errorBackground').style.display = 'block';
               });
-
-            document.getElementById('editBtnPost').addEventListener('click', () => {
-              const target = e.target;
-              const publicaciones = document.querySelector('#editInput').value;
-
-              docRef.doc(target.dataset.id)
-                .update({
-                  publicaciones,
-                })
-                .then(() => {
-                  // Document successfully updated!
-                })
-                .catch((error) => {
-                  errorMessage.innerHTML = error.message;
-                  container.querySelector('#errorBackground').style.display = 'block';
-                });
-            });
-            document.getElementById('closeEdit').addEventListener('click', () => {
-              document.getElementById('modalEdit').style.display = 'none';
-            });
           });
         });
 
